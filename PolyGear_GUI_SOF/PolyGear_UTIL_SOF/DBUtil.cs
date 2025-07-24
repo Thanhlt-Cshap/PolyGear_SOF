@@ -122,5 +122,28 @@ namespace PolyGear_UTIL_SOF
             }
         }
 
+
+        public static DataTable GetDataTable(string sql, List<object> args = null, CommandType cmdType = CommandType.Text)
+        {
+            using (SqlConnection conn = new SqlConnection(connString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                cmd.CommandType = cmdType;
+
+                if (args != null)
+                {
+                    for (int i = 0; i < args.Count; i++)
+                    {
+                        cmd.Parameters.AddWithValue($"@{i}", args[i] ?? DBNull.Value);
+                    }
+                }
+
+                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+                return dt;
+            }
+        }
+
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PolyGear_DTO_SOF
 {
-    public class Accounts
+    public class AccountsDTO
     {
     }
 }

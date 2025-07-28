@@ -8,5 +8,9 @@ namespace PolyGear_DTO_SOF
 {
     public class ProductTypesDTO
     {
+        public string ProductTypeID { get; set; }
+        public string ProductTypeName { get; set; }
+        public string Description { get; set; }
+        public bool Status { get; set; }
     }
 }

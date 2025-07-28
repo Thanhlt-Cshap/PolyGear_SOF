@@ -88,7 +88,7 @@
             // btnXoa
             // 
             btnXoa.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            btnXoa.Location = new Point(458, 253);
+            btnXoa.Location = new Point(456, 253);
             btnXoa.Name = "btnXoa";
             btnXoa.Size = new Size(110, 41);
             btnXoa.TabIndex = 40;
@@ -99,7 +99,7 @@
             // btnSua
             // 
             btnSua.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            btnSua.Location = new Point(250, 253);
+            btnSua.Location = new Point(264, 253);
             btnSua.Name = "btnSua";
             btnSua.Size = new Size(110, 41);
             btnSua.TabIndex = 39;
@@ -137,6 +137,7 @@
             dtpNgayDangKy.Name = "dtpNgayDangKy";
             dtpNgayDangKy.Size = new Size(139, 36);
             dtpNgayDangKy.TabIndex = 36;
+            dtpNgayDangKy.ValueChanged += dtpNgayDangKy_ValueChanged;
             // 
             // chkHoatDong
             // 
@@ -302,6 +303,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Name = "CustomerManagementForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "CustomerManagementForm";
             Load += CustomerManagementForm_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();

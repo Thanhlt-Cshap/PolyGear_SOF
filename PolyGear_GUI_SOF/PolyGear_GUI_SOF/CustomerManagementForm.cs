@@ -21,9 +21,32 @@ namespace PolyGear_GUI_SOF
             ClearForm(); // Xóa dữ liệu trong form khi khởi tạo
         }
         private void LoadDataGridView()
-        {
+        { 
+            
+
+            //ProductTypeDAL productTypeDAL = new ProductTypeDAL();
+            //List<ProductTypesDTO> productTypes = productTypeDAL.selectAll();
             CustomerDAL customerDAL = new CustomerDAL();
-            dgvKhachHang.DataSource = customerDAL.selectAll();
+            List<Customers> customers = customerDAL.selectAll();
+
+            // Sắp xếp danh sách theo mã loại sản phẩm giảm dần trước khi gán vào DataSource
+            var sortedCustomers = customers
+                .OrderByDescending(pt => pt.CustomerID)
+                .ToList();
+
+            dgvKhachHang.DataSource = null; // Reset DataSource để tránh lỗi hiển thị
+            dgvKhachHang.DataSource = sortedCustomers;
+
+            // Sắp xếp danh sách theo mã khách hàng giảm dần trước khi gán vào DataSource
+            dgvKhachHang.Columns["CustomerID"].HeaderText = "Mã Khách Hàng";
+            dgvKhachHang.Columns["FullName"].HeaderText = "Họ Tên";
+            dgvKhachHang.Columns["Email"].HeaderText = "Email";
+            dgvKhachHang.Columns["Phone"].HeaderText = "Số Điện Thoại";
+            dgvKhachHang.Columns["Address"].HeaderText = "Địa Chỉ";
+            dgvKhachHang.Columns["RegisterDate"].HeaderText = "Ngày Đăng Ký";
+            dgvKhachHang.Columns["Status"].HeaderText = "Trạng Thái";
+
+
         }
 
         private void ClearForm()
@@ -47,8 +70,7 @@ namespace PolyGear_GUI_SOF
 
         private void CustomerManagementForm_Load(object sender, EventArgs e)
         {
-            CustomerDAL customerDAL = new CustomerDAL();
-            dgvKhachHang.DataSource = customerDAL.selectAll();
+            
         }
 
         private void btnLamMoi_Click(object sender, EventArgs e)
@@ -91,6 +113,21 @@ namespace PolyGear_GUI_SOF
                     MessageBox.Show("Tên khách hàng không hợp lệ. Vui lòng nhập tên hợp lệ.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+
+                // bắt lỗi ngày đăng ký (không được để trống, không được lớn hơn ngày hiện tại và ở ngày quá khứ)
+                if (RegistrationDate > DateTime.Now)
+                {
+                    MessageBox.Show("Ngày đăng ký không hợp lệ. Không được chọn ngày ở tương lai.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                //// không được ở quá khứ
+                //if (RegistrationDate <DateTime.Now)
+                //{
+                //    MessageBox.Show("Ngày đăng ký không hợp lệ. Không được chọn ngày ở quá khứ", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //    return;
+                //}
+
+
 
 
 
@@ -143,11 +180,22 @@ namespace PolyGear_GUI_SOF
                 existingCustomer.Address = txtDiaChi.Text.Trim();
                 existingCustomer.RegisterDate = dtpNgayDangKy.Value;
                 existingCustomer.Status = chkHoatDong.Checked;
+
+                // bắt lỗi ngày đăng ký 
+                if (existingCustomer.RegisterDate > DateTime.Now)
+                {
+                    MessageBox.Show("Ngày đăng ký không hợp lệ. Không được chọn ngày ở tương lai.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                
+
+
                 customerDAL.update(existingCustomer);
                 MessageBox.Show("Cập nhật khách hàng thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 ClearForm();
                 // Cập nhật lại DataGridView
                 LoadDataGridView();
+
             }
             catch (Exception ex)
             {
@@ -235,6 +283,13 @@ namespace PolyGear_GUI_SOF
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             SearchCustomer();
+        }
+
+        private void dtpNgayDangKy_ValueChanged(object sender, EventArgs e)
+        {
+            
+
+
         }
     }
 }

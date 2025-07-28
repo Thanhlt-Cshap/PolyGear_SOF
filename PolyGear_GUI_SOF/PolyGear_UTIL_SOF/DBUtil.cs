@@ -36,18 +36,25 @@ namespace PolyGear_UTIL_SOF
         {
             SqlCommand cmd = GetCommand(sql, args, cmdType);
             cmd.Connection.Open();
-            cmd.Transaction = cmd.Connection.BeginTransaction();
+            SqlTransaction transaction = cmd.Connection.BeginTransaction();
+            cmd.Transaction = transaction;
             try
             {
                 cmd.ExecuteNonQuery();
-                cmd.Transaction.Commit();
+                transaction.Commit();
             }
             catch (Exception)
             {
-                cmd.Transaction.Rollback();
+                if (transaction != null)
+                {
+                    transaction.Rollback();
+                }
                 throw;
             }
-
+            finally
+            {
+                cmd.Connection.Close();
+            }
         }
 
         public static SqlDataReader Query(string sql, List<Object> args, CommandType cmdType = CommandType.Text)

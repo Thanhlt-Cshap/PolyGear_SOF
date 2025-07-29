@@ -72,8 +72,7 @@ namespace PolyGear_DAL_SOF
                     entity.Description = reader["Description"].ToString();
                     entity.Status = Convert.ToBoolean(reader["Status"]);
                     list.Add(entity);
-                }
-                ;
+                };
 
             }
             catch (Exception ex)

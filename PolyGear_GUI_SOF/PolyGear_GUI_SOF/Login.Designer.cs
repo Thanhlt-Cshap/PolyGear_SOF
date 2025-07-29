@@ -134,9 +134,8 @@
             // 
             txtUsername.Location = new Point(145, 216);
             txtUsername.Margin = new Padding(4);
-            txtUsername.Multiline = true;
             txtUsername.Name = "txtUsername";
-            txtUsername.Size = new Size(454, 42);
+            txtUsername.Size = new Size(454, 31);
             txtUsername.TabIndex = 3;
             // 
             // btnLogin
@@ -156,10 +155,9 @@
             // 
             txtPassword.Location = new Point(145, 344);
             txtPassword.Margin = new Padding(4);
-            txtPassword.Multiline = true;
             txtPassword.Name = "txtPassword";
             txtPassword.PasswordChar = '*';
-            txtPassword.Size = new Size(450, 44);
+            txtPassword.Size = new Size(450, 31);
             txtPassword.TabIndex = 4;
             // 
             // Login

@@ -12,6 +12,7 @@ using DAL_SOF205;
 using PolyGear_DAL_SOF;
 using PolyGear_DTO_SOF;
 using PolyGear_UTIL_SOF;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using static PolyGear_DTO_SOF.AccountsDTO;
 
 namespace PolyGear_GUI_SOF
@@ -27,6 +28,8 @@ namespace PolyGear_GUI_SOF
 
             dgvEmployee.CellFormatting += dgvEmployee_CellFormatting;
             dgvAccount.CellFormatting += dgvAccount_CellFormatting;
+
+
 
             LoadRoles();
             LoadDataToGrid();
@@ -44,6 +47,7 @@ namespace PolyGear_GUI_SOF
 
         private void Load()
         {
+
             EmployeesDAL EmployeesDAL = new EmployeesDAL();
             List<EmployeesDTO> danhSach = EmployeesDAL.selectAll()
                                                     .OrderByDescending(emp => emp.EmployeeID) // hoặc DateCreated nếu có
@@ -80,6 +84,11 @@ namespace PolyGear_GUI_SOF
 
             btnSua.Enabled = false;
             btnXoa.Enabled = false;
+
+          
+            GanSuKienChoTatCaTextBox(this);
+        
+
 
         }
 
@@ -350,14 +359,14 @@ namespace PolyGear_GUI_SOF
         }
 
 
-
-
         private void btnThem_Click(object sender, EventArgs e)
         {
             try
             {
                 var accDAL = new AccountDAL();
+                var dal = new EmployeesDAL();
                 var account = GetAccountFromForm();
+                var emp = GetFormData();
 
                 if (account == null)
                 {
@@ -365,32 +374,70 @@ namespace PolyGear_GUI_SOF
                     return;
                 }
 
-
                 var danhSachTaiKhoan = accDAL.selectAll();
-                bool isTrungUsername = danhSachTaiKhoan.Any(acc => acc.Username.Equals(account.Username, StringComparison.OrdinalIgnoreCase));
-                if (isTrungUsername)
+                var danhSachNhanVien = dal.selectAll();
+
+                if (danhSachTaiKhoan.Any(acc => acc.Username.Equals(account.Username, StringComparison.OrdinalIgnoreCase)))
                 {
                     MessageBox.Show("Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
+                if (!EmployeeValidation.IsValidUsername(account.Username))
+                {
+                    MessageBox.Show("Tên đăng nhập phải bắt đầu bằng chữ cái.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(account.Password))
+                {
+                    MessageBox.Show("Vui lòng nhập mật khẩu!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (!EmployeeValidation.IsValidEmail(emp.Email))
+                {
+                    MessageBox.Show("Email không đúng định dạng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (EmployeeValidation.IsEmailDuplicate(emp.Email, danhSachNhanVien))
+                {
+                    MessageBox.Show("Email đã tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (!EmployeeValidation.IsValidName(emp.FullName))
+                {
+                    MessageBox.Show("Họ tên không hợp lệ (phải là chữ cái và ít nhất 2 ký tự)!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (!EmployeeValidation.IsValidPhoneNumber(emp.Phone))
+                {
+                    MessageBox.Show("Số điện thoại không hợp lệ!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (EmployeeValidation.IsPhoneDuplicate(emp.Phone, danhSachNhanVien))
+                {
+                    MessageBox.Show("Số điện thoại đã tồn tại!", "Trùng số", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // ✅ Tất cả hợp lệ rồi mới tạo ID và thêm vào DB
                 account.AccountID = accDAL.GenerateNewAccountID();
-                accDAL.insert(account);
-
-                EmployeesDAL dal = new EmployeesDAL();
-                EmployeesDTO emp = GetFormData();
                 emp.AccountID = account.AccountID;
-
                 emp.EmployeeID = dal.GenerateAutoEmployeeID();
 
+                accDAL.insert(account);
                 dal.insert(emp);
 
                 MessageBox.Show("Thêm nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 Load();
                 LoadDataToGrid();
                 ClearForm();
-               
-
             }
             catch (Exception ex)
             {
@@ -398,23 +445,65 @@ namespace PolyGear_GUI_SOF
             }
         }
 
-
         private void btnSua_Click(object sender, EventArgs e)
         {
             try
             {
-                // 1. Cập nhật nhân viên
                 EmployeesDTO emp = GetFormData();
                 EmployeesDAL dal = new EmployeesDAL();
+                var danhSachNhanVien = dal.selectAll();
+
+                // 1. Kiểm tra họ tên
+                if (!EmployeeValidation.IsValidName(emp.FullName))
+                {
+                    MessageBox.Show("Họ tên không hợp lệ (ít nhất 2 ký tự)!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // 2. Kiểm tra email
+                if (!EmployeeValidation.IsValidEmail(emp.Email))
+                {
+                    MessageBox.Show("Email không đúng định dạng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Tránh trùng email với nhân viên khác
+                if (danhSachNhanVien.Any(e => e.Email.Equals(emp.Email, StringComparison.OrdinalIgnoreCase)
+                                              && e.EmployeeID != emp.EmployeeID))
+                {
+                    MessageBox.Show("Email đã tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // 3. Kiểm tra số điện thoại
+                if (!EmployeeValidation.IsValidPhoneNumber(emp.Phone))
+                {
+                    MessageBox.Show("Số điện thoại không hợp lệ!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                if (EmployeeValidation.IsPhoneDuplicate(emp.Phone, danhSachNhanVien))
+                {
+                    MessageBox.Show("Số điện thoại đã tồn tại!", "Trùng số", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // 4. Cập nhật nhân viên
                 dal.update(emp);
 
-                // 2. Cập nhật tài khoản
+                // 5. Cập nhật tài khoản
                 AccountsDTO acc = GetAccountFromForm();
                 if (acc != null)
                 {
                     AccountDAL accDal = new AccountDAL();
 
-                    // Kiểm tra trùng Username (trừ chính mình)
+                    // Kiểm tra username bắt đầu bằng chữ
+                    if (!EmployeeValidation.IsValidUsername(acc.Username))
+                    {
+                        MessageBox.Show("Tên đăng nhập phải bắt đầu bằng chữ cái!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // Kiểm tra username không bị trùng (trừ chính nó)
                     if (accDal.CheckDuplicateUsername(acc.Username, acc.AccountID))
                     {
                         MessageBox.Show("Tên đăng nhập đã tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -430,7 +519,7 @@ namespace PolyGear_GUI_SOF
                 LoadDataToGrid();     // Load lại tài khoản
                 ClearForm();
 
-                // Chọn lại dòng vừa cập nhật (nếu muốn)
+                // Chọn lại dòng vừa cập nhật
                 if (acc != null)
                 {
                     foreach (DataGridViewRow row in dgvAccount.Rows)
@@ -488,8 +577,14 @@ namespace PolyGear_GUI_SOF
                     // 2. Sau đó xóa tài khoản nếu có
                     if (!string.IsNullOrEmpty(emp.AccountID))
                     {
+                        Console.WriteLine(">> Đang xóa tài khoản với ID: " + emp.AccountID);
                         accDAL.delete(emp.AccountID);
                     }
+                    else
+                    {
+                        Console.WriteLine(">> AccountID bị rỗng hoặc null, không thể xóa tài khoản.");
+                    }
+
 
                     MessageBox.Show("Xóa nhân viên và tài khoản thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     Load();               // Load lại nhân viên
@@ -502,9 +597,6 @@ namespace PolyGear_GUI_SOF
                 MessageBox.Show("Xóa nhân viên thất bại!\n" + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
-
 
         private void tabConTrol_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -557,6 +649,35 @@ namespace PolyGear_GUI_SOF
         {
             Application.Exit(); // → đảm bảo app thoát luôn
         }
+        private void TextBox_KeyPress_KhongChoKhoangTrang(object sender, KeyPressEventArgs e)
+        {
+            if (sender is TextBox txt)
+            {
+                // Trừ txtHoTen và txtDiaChi
+                if (txt.Name != "txtHoTen" && txt.Name != "txtDiaChi")
+                {
+                    if (char.IsWhiteSpace(e.KeyChar))
+                    {
+                        e.Handled = true; // Chặn nhập
+                    }
+                }
+            }
+        }
+        private void GanSuKienChoTatCaTextBox(Control parent)
+        {
+            foreach (Control ctrl in parent.Controls)
+            {
+                if (ctrl is TextBox txt)
+                {
+                    txt.KeyPress += TextBox_KeyPress_KhongChoKhoangTrang;
+                }
+                else if (ctrl.HasChildren)
+                {
+                    GanSuKienChoTatCaTextBox(ctrl);
+                }
+            }
+        }
+
 
     }
 }

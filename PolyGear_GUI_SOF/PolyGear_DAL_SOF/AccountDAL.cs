@@ -91,9 +91,15 @@ namespace DAL_SOF205
 
         public override void delete(string id)
         {
+            // Gỡ liên kết trong bảng Employees trước (nếu có)
+            string sqlUpdateEmployee = "UPDATE Employees SET AccountID = NULL WHERE AccountID = @0";
+            DBUtil.Update(sqlUpdateEmployee, new List<object> { id });
+
+            // Xóa khỏi bảng Accounts
             string sql = "DELETE FROM Accounts WHERE AccountID = @0";
             DBUtil.Update(sql, new List<object> { id });
         }
+
         public void deleteByUsername(string username)
         {
             string sql = "DELETE FROM Accounts WHERE Username = @0";

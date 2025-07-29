@@ -126,10 +126,30 @@ namespace DAL_SOF205
 
         public override void delete(string id)
         {
-            string sql = "DELETE FROM Employees WHERE EmployeeID = @0";
-            List<object> parameters = new List<object> { id };
-            DBUtil.Update(sql, parameters);
+            // 1. Lấy AccountID trước khi xóa Employee
+            string getAccountIdSql = "SELECT AccountID FROM Employees WHERE EmployeeID = @0";
+            List<object> param1 = new List<object> { id };
+            DataTable dt = DBUtil.GetDataTable(getAccountIdSql, param1);
+
+            string accountId = null;
+            if (dt.Rows.Count > 0)
+            {
+                accountId = dt.Rows[0]["AccountID"].ToString();
+            }
+
+            // 2. Xóa Employee
+            string deleteEmployeeSql = "DELETE FROM Employees WHERE EmployeeID = @0";
+            DBUtil.Update(deleteEmployeeSql, param1);
+
+            // 3. Nếu có AccountID -> xóa tiếp trong Accounts
+            if (!string.IsNullOrEmpty(accountId))
+            {
+                string deleteAccountSql = "DELETE FROM Accounts WHERE AccountID = @0";
+                List<object> param2 = new List<object> { accountId };
+                DBUtil.Update(deleteAccountSql, param2);
+            }
         }
+
 
         public string GenerateAutoEmployeeID()
         {

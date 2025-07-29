@@ -82,14 +82,14 @@
             // itmDoiMatKhau
             // 
             itmDoiMatKhau.Name = "itmDoiMatKhau";
-            itmDoiMatKhau.Size = new Size(270, 38);
+            itmDoiMatKhau.Size = new Size(247, 38);
             itmDoiMatKhau.Text = "Đổi Mật Khẩu";
             itmDoiMatKhau.Click += itmDoiMatKhau_Click;
             // 
             // quảnLýToolStripMenuItem1
             // 
             quảnLýToolStripMenuItem1.Name = "quảnLýToolStripMenuItem1";
-            quảnLýToolStripMenuItem1.Size = new Size(270, 38);
+            quảnLýToolStripMenuItem1.Size = new Size(247, 38);
             quảnLýToolStripMenuItem1.Text = "Quản lý";
             // 
             // quảnLýToolStripMenuItem
@@ -282,6 +282,7 @@
             Name = "Main";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Main";
+            FormClosing += LoginGUI_FormClosing;
             Load += FormMain_Load;
             VisibleChanged += Main_VisibleChanged;
             menuStrip1.ResumeLayout(false);

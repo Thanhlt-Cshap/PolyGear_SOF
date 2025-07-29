@@ -34,11 +34,10 @@ namespace PolyGear_GUI_SOF
                 Session.CurrentAccountID = account.AccountID;
 
                 MessageBox.Show("Đăng nhập thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                // Chuyển sang form chính
                 this.Hide();
-                new Main().ShowDialog();
-                this.Close();
+                Main mainForm = new Main();
+                mainForm.Show();
+                mainForm.FormClosed += (s, args) => this.Show(); // hoặc this.Close();
             }
             else
             {

@@ -62,14 +62,14 @@ namespace PolyGear_GUI_SOF
             form.Show();
         }
 
-        private void Logout()
-        {
-            this.Close();
-            AuthUtil.Logout();
-            Login fromLogin = new Login();
-            fromLogin.ShowDialog();
-            this.Show();
-        }
+        //private void Logout()
+        //{
+        //    this.Close();
+        //    AuthUtil.Logout();
+        //    Login fromLogin = new Login();
+        //    fromLogin.ShowDialog();
+        //    this.Show();
+        //}
         private void Main_VisibleChanged(object sender, EventArgs e)
         {
             CheckRole();
@@ -89,7 +89,13 @@ namespace PolyGear_GUI_SOF
 
         private void imtDangXuat_Click(object sender, EventArgs e)
         {
-            Logout();
+            this.Hide(); // Ẩn form Main hiện tại
+
+            Login loginForm = new Login();
+            loginForm.Show(); // Mở lại form đăng nhập
+
+            // Nếu muốn đóng form Main sau khi loginForm đóng => dùng:
+            // loginForm.FormClosed += (s, args) => this.Close();        
         }
 
 
@@ -105,6 +111,7 @@ namespace PolyGear_GUI_SOF
         }
         private void itmDoiMatKhau_Click(object sender, EventArgs e)
         {
+            this.Hide(); // Ẩn form Main hiện tại
             AccountDAL dal = new AccountDAL();
             AccountsDTO acc = dal.selectById(AuthUtil.user.AccountID);
 
@@ -116,7 +123,18 @@ namespace PolyGear_GUI_SOF
 
             ChangePasswordForm form = new ChangePasswordForm(acc);
             form.ShowDialog();
-        }
 
+            Login loginForm = new Login();
+            loginForm.Show(); // Mở lại form đăng nhập
+
+        }
+        private void LoginGUI_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (this.DialogResult != DialogResult.OK && e.CloseReason == CloseReason.UserClosing)
+            {
+                MessageBox.Show("Vui lòng đăng xuất!!!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                e.Cancel = true;
+            }
+        }
     }
 }

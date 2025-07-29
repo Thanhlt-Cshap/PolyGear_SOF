@@ -73,6 +73,7 @@
             btnThoat.TabIndex = 9;
             btnThoat.Text = "Thoát";
             btnThoat.UseVisualStyleBackColor = false;
+            btnThoat.Click += btnExit_Click;
             // 
             // label1
             // 
@@ -116,6 +117,7 @@
             chkShowPass.TabIndex = 7;
             chkShowPass.Text = "Hiện thị mật khẩu";
             chkShowPass.UseVisualStyleBackColor = true;
+            chkShowPass.Click += chkShowPass_CheckedChanged;
             // 
             // label3
             // 
@@ -148,6 +150,7 @@
             btnLogin.TabIndex = 5;
             btnLogin.Text = "Đăng nhập ";
             btnLogin.UseVisualStyleBackColor = false;
+            btnLogin.Click += btnLogin_Click;
             // 
             // txtPassword
             // 
@@ -168,6 +171,7 @@
             Name = "Login";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Login";
+            FormClosing += LoginGUI_FormClosing;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ResumeLayout(false);

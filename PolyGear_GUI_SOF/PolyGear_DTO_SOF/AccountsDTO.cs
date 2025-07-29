@@ -8,18 +8,29 @@ namespace PolyGear_DTO_SOF
 {
     public class AccountsDTO
     {
+
         public string AccountID { get; set; }
+
         public string Username { get; set; }
         public string Password { get; set; }
         public string RoleID { get; set; }
         public bool Status { get; set; }
         public string RoleName { get; set; }
+        public bool IsFirstLogin { get; set; }
+
 
         public EmployeesDTO EmployeeInfo { get; set; } // Thêm dòng này
 
+        public static class Session
+        {
+            public static string CurrentAccountID { get; set; }
+        }
 
 
-        public AccountsDTO() { }
+        public AccountsDTO() 
+        {
+            IsFirstLogin = true;
+        }
 
 
         public override string ToString()
@@ -33,6 +44,10 @@ namespace PolyGear_DTO_SOF
             Password = password;
             RoleID = roleID;
             Status = status;
+
         }
+
+
+
     }
 }

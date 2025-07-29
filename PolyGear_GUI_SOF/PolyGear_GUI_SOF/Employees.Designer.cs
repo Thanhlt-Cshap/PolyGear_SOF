@@ -93,6 +93,7 @@
             dgvEmployee.RowHeadersWidth = 62;
             dgvEmployee.Size = new Size(1464, 695);
             dgvEmployee.TabIndex = 0;
+            dgvEmployee.CellClick += dgvEmployee_CellClick;
             // 
             // rdoNu
             // 
@@ -266,6 +267,7 @@
             btnLamMoi.TabIndex = 102;
             btnLamMoi.Text = "Làm mới";
             btnLamMoi.UseVisualStyleBackColor = false;
+            btnLamMoi.Click += btnLamMoi_Click;
             // 
             // btnXoa
             // 
@@ -278,6 +280,7 @@
             btnXoa.TabIndex = 101;
             btnXoa.Text = "Xoá";
             btnXoa.UseVisualStyleBackColor = false;
+            btnXoa.Click += btnXoa_Click;
             // 
             // btnSua
             // 
@@ -290,6 +293,7 @@
             btnSua.TabIndex = 100;
             btnSua.Text = "Sửa";
             btnSua.UseVisualStyleBackColor = false;
+            btnSua.Click += btnSua_Click;
             // 
             // btnThem
             // 
@@ -302,6 +306,7 @@
             btnThem.TabIndex = 99;
             btnThem.Text = "Thêm";
             btnThem.UseVisualStyleBackColor = false;
+            btnThem.Click += btnThem_Click;
             // 
             // txtEmail
             // 
@@ -428,6 +433,7 @@
             tabConTrol.SelectedIndex = 0;
             tabConTrol.Size = new Size(1478, 744);
             tabConTrol.TabIndex = 2;
+            tabConTrol.SelectedIndexChanged += tabConTrol_SelectedIndexChanged;
             // 
             // TabCapNhat
             // 
@@ -454,6 +460,7 @@
             dgvAccount.RowHeadersWidth = 62;
             dgvAccount.Size = new Size(836, 300);
             dgvAccount.TabIndex = 88;
+            dgvAccount.CellClick += dgvAccount_CellClick;
             // 
             // groupBox2
             // 
@@ -476,12 +483,13 @@
             // 
             // btnHien
             // 
-            btnHien.Location = new Point(690, 180);
+            btnHien.Location = new Point(616, 182);
             btnHien.Name = "btnHien";
             btnHien.Size = new Size(68, 34);
             btnHien.TabIndex = 94;
             btnHien.Text = "Hiện";
             btnHien.UseVisualStyleBackColor = true;
+            btnHien.Click += btnShow_Click;
             // 
             // btnAn
             // 
@@ -491,6 +499,7 @@
             btnAn.TabIndex = 93;
             btnAn.Text = "Ẩn";
             btnAn.UseVisualStyleBackColor = true;
+            btnAn.Click += btnHide_Click;
             // 
             // label14
             // 
@@ -555,6 +564,7 @@
             Controls.Add(tabConTrol);
             Name = "Employees";
             Text = "Employees";
+            FormClosed += Employees_FormClosed;
             ((System.ComponentModel.ISupportInitialize)dgvEmployee).EndInit();
             tabDanhSach.ResumeLayout(false);
             groupBox1.ResumeLayout(false);

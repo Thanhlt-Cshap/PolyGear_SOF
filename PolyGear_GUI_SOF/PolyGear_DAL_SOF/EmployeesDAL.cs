@@ -158,6 +158,14 @@ namespace DAL_SOF205
             int nextNumber = (numbers.Count > 0) ? numbers.Max() + 1 : 1;
             return "NV" + nextNumber.ToString("D4");
         }
+        public EmployeesDTO GetByAccountID(string accountID)
+        {
+            string sql = "SELECT * FROM Employees WHERE AccountID = @0";
+            List<object> parameters = new List<object> { accountID };
+
+            var result = selectBySql(sql, parameters);
+            return result.Count > 0 ? result[0] : null;
+        }
 
     }
 }

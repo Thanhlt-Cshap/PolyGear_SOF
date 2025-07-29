@@ -20,31 +20,51 @@ namespace PolyGear_GUI_SOF
             InitializeComponent();
         }
 
-        private void ShowFromInPanel(Form form)
-        {
-            //xóa form cũ trong panel
-            pnlFormContainer.Controls.Clear();
-            //thiết lập form con
-            form.TopLevel = false;
-            form.FormBorderStyle = FormBorderStyle.None;
-            form.Dock = DockStyle.Fill;
 
-            //thêm form vào panel
-            pnlFormContainer.Controls.Add(form);
-            form.Show();
-        }
         private void CheckRole()
         {
             if (!AuthUtil.IsLogin())
             {
                 Login formlogin = new Login();
                 formlogin.ShowDialog();
+
+
             }
+
+            if (AuthUtil.IsLogin())
+            {
+                var dal = new AccountDAL();
+                var acc = dal.selectById(AuthUtil.user.AccountID);
+
+                if (acc != null && acc.IsFirstLogin)
+                {
+                    MessageBox.Show("Bạn đang đăng nhập lần đầu. Vui lòng đổi mật khẩu.", "Thông báo");
+
+                    ChangePasswordForm form = new ChangePasswordForm(acc);
+                    form.ShowDialog();
+
+                    string sql = "UPDATE Accounts SET IsFirstLogin = 0 WHERE AccountID = @0";
+                    DBUtil.Update(sql, new List<object> { acc.AccountID });
+
+                    acc.IsFirstLogin = false; 
+                }
+            }
+        }
+
+        private void ShowFromInPanel(Form form)
+        {
+            pnlFormContainer.Controls.Clear();
+            form.TopLevel = false;
+            form.FormBorderStyle = FormBorderStyle.None;
+            form.Dock = DockStyle.Fill;
+
+            pnlFormContainer.Controls.Add(form);
+            form.Show();
         }
 
         private void Logout()
         {
-            this.Hide();
+            this.Close();
             AuthUtil.Logout();
             Login fromLogin = new Login();
             fromLogin.ShowDialog();
@@ -59,6 +79,11 @@ namespace PolyGear_GUI_SOF
 
         private void itmQLNhanVien_Click(object sender, EventArgs e)
         {
+            if (!AuthUtil.IsStoreOwner())
+            {
+                MessageBox.Show("Bạn không có quyền truy cập vào chức năng này.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             ShowFromInPanel(new Employees());
         }
 
@@ -67,29 +92,31 @@ namespace PolyGear_GUI_SOF
             Logout();
         }
 
+
+
         private void FormMain_Load(object sender, EventArgs e)
         {
             if (AuthUtil.IsLogin())
             {
                 lblTaiKhoan.Text = AuthUtil.user.AccountID;
             }
+            //itmQLNhanVien.Enabled = AuthUtil.IsStoreOwner();
+
         }
-        //private void btnDoiMatKhau_Click(object sender, EventArgs e)
-        //{
-        //    // Gọi DAL lấy thông tin tài khoản
-        //    AccountDAL dal = new AccountDAL();
-        //    AccountsDTO acc = dal.selectById(AuthUtil.user.AccountID);
+        private void itmDoiMatKhau_Click(object sender, EventArgs e)
+        {
+            AccountDAL dal = new AccountDAL();
+            AccountsDTO acc = dal.selectById(AuthUtil.user.AccountID);
 
-        //    if (acc == null)
-        //    {
-        //        MessageBox.Show("Không tìm thấy thông tin tài khoản trong CSDL.");
-        //        return;
-        //    }
+            if (acc == null)
+            {
+                MessageBox.Show("Không tìm thấy thông tin tài khoản trong CSDL.");
+                return;
+            }
 
-        //    // Mở form đổi mật khẩu, truyền dữ liệu vào
-        //    ChangePasswordForm form = new ChangePasswordForm(acc);
-        //    form.ShowDialog();
-        //}
+            ChangePasswordForm form = new ChangePasswordForm(acc);
+            form.ShowDialog();
+        }
 
     }
 }

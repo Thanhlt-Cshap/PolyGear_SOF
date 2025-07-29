@@ -11,7 +11,7 @@ namespace PolyGear_UTIL_SOF
 {
     public class DBUtil
     {
-        private static string connString = "Data Source=LAPTOP-4GJ36EL1\\SQLEXPRESS;Initial Catalog=PolyGear;Integrated Security=True;TrustServerCertificate=True;";
+        private static string connString = "Data Source=.;Database=PolyGear;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
 
         public static SqlCommand GetCommand(string sql, List<Object> args, CommandType cmdType)
         {

@@ -30,7 +30,9 @@ namespace DAL_SOF205
                         Password = reader["Password"].ToString(),
                         RoleID = reader["RoleID"].ToString(),
                         Status = Convert.ToBoolean(reader["Status"]),
-                        RoleName = reader["RoleName"].ToString() // <-- Đọc thêm RoleName
+                        RoleName = reader["RoleName"].ToString(),
+                        IsFirstLogin = reader["IsFirstLogin"] != DBNull.Value && Convert.ToBoolean(reader["IsFirstLogin"])
+
                     };
 
 
@@ -54,32 +56,37 @@ namespace DAL_SOF205
 
         public override void insert(AccountsDTO entity)
         {
-            string sql = @"INSERT INTO Accounts (AccountID, Username, Password, RoleID, Status)
-                           VALUES (@0, @1, @2, @3, @4)";
+            string sql = @"INSERT INTO Accounts (AccountID, Username, Password, RoleID, Status, IsFirstLogin)
+               VALUES (@0, @1, @2, @3, @4, @5)";
             DBUtil.Update(sql, new List<object> {
-                entity.AccountID,
-                entity.Username,
-                entity.Password,
-                entity.RoleID,
-                entity.Status
-            });
+    entity.AccountID,
+    entity.Username,
+    entity.Password,
+    entity.RoleID,
+    entity.Status,
+    entity.IsFirstLogin
+});
         }
 
         public override void update(AccountsDTO entity)
         {
             string sql = @"UPDATE Accounts SET 
-                            Username = @0, 
-                            Password = @1, 
-                            RoleID = @2, 
-                            Status = @3 
-                           WHERE AccountID = @4";
+                Username = @0, 
+                Password = @1, 
+                RoleID = @2, 
+                Status = @3,
+                IsFirstLogin = @4
+               WHERE AccountID = @5";
+
             DBUtil.Update(sql, new List<object> {
-                entity.Username,
-                entity.Password,
-                entity.RoleID,
-                entity.Status,
-                entity.AccountID
-            });
+    entity.Username,
+    entity.Password,
+    entity.RoleID,
+    entity.Status,
+    entity.IsFirstLogin,
+    entity.AccountID
+});
+
         }
 
         public override void delete(string id)

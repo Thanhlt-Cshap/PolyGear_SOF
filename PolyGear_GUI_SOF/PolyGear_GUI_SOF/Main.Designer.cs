@@ -31,6 +31,7 @@
             menuStrip1 = new MenuStrip();
             tàiKhoảnToolStripMenuItem = new ToolStripMenuItem();
             itmDoiMatKhau = new ToolStripMenuItem();
+            quảnLýToolStripMenuItem1 = new ToolStripMenuItem();
             quảnLýToolStripMenuItem = new ToolStripMenuItem();
             itmQLNhanVien = new ToolStripMenuItem();
             itmQLSanPham = new ToolStripMenuItem();
@@ -54,7 +55,6 @@
             toolStripButton5 = new ToolStripButton();
             pnlFormContainer = new Panel();
             label1 = new Label();
-            quảnLýToolStripMenuItem1 = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             pnlFormContainer.SuspendLayout();
@@ -82,8 +82,15 @@
             // itmDoiMatKhau
             // 
             itmDoiMatKhau.Name = "itmDoiMatKhau";
-            itmDoiMatKhau.Size = new Size(247, 38);
+            itmDoiMatKhau.Size = new Size(270, 38);
             itmDoiMatKhau.Text = "Đổi Mật Khẩu";
+            itmDoiMatKhau.Click += itmDoiMatKhau_Click;
+            // 
+            // quảnLýToolStripMenuItem1
+            // 
+            quảnLýToolStripMenuItem1.Name = "quảnLýToolStripMenuItem1";
+            quảnLýToolStripMenuItem1.Size = new Size(270, 38);
+            quảnLýToolStripMenuItem1.Text = "Quản lý";
             // 
             // quảnLýToolStripMenuItem
             // 
@@ -97,6 +104,7 @@
             itmQLNhanVien.Name = "itmQLNhanVien";
             itmQLNhanVien.Size = new Size(353, 38);
             itmQLNhanVien.Text = "Quản Lý Nhân Viên";
+            itmQLNhanVien.Click += itmQLNhanVien_Click;
             // 
             // itmQLSanPham
             // 
@@ -166,6 +174,7 @@
             khácToolStripMenuItem.Name = "khácToolStripMenuItem";
             khácToolStripMenuItem.Size = new Size(129, 34);
             khácToolStripMenuItem.Text = "Đăng Xuất";
+            khácToolStripMenuItem.Click += imtDangXuat_Click;
             // 
             // toolStrip1
             // 
@@ -262,12 +271,6 @@
             label1.Size = new Size(0, 25);
             label1.TabIndex = 10;
             // 
-            // quảnLýToolStripMenuItem1
-            // 
-            quảnLýToolStripMenuItem1.Name = "quảnLýToolStripMenuItem1";
-            quảnLýToolStripMenuItem1.Size = new Size(270, 38);
-            quảnLýToolStripMenuItem1.Text = "Quản lý";
-            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -279,6 +282,8 @@
             Name = "Main";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Main";
+            Load += FormMain_Load;
+            VisibleChanged += Main_VisibleChanged;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             toolStrip1.ResumeLayout(false);

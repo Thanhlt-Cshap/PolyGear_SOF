@@ -15,7 +15,7 @@ namespace PolyGear_DTO_SOF
         public bool Status { get; set; }
         public string RoleName { get; set; }
 
-        public EmployeeDTO EmployeeInfo { get; set; } // Thêm dòng này
+        public EmployeesDTO EmployeeInfo { get; set; } // Thêm dòng này
 
 
 

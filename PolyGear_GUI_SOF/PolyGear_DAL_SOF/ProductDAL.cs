@@ -196,6 +196,39 @@ namespace PolyGear_DAL_SOF
             return selectBySql(sql, parameters);
         }
 
-        
+        public decimal getDonGiaByMa(string maSanPham)
+        {
+            string sql = "SELECT UnitPrice FROM Products WHERE ProductID = @0";
+            List<object> thamSo = new List<object> { maSanPham };
+
+            try
+            {
+                object result = DBUtil.ScalarQuery(sql, thamSo);
+                return result != null ? Convert.ToDecimal(result) : 0;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy đơn giá sản phẩm: " + ex.Message);
+            }
+        }
+
+        // phieu ban hang -- trang thai 
+        public bool IsDiscontinued(string maSanPham)
+        {
+            string sql = "SELECT Status FROM Products WHERE ProductID = @0";
+            List<object> thamSo = new List<object> { maSanPham };
+            try
+            {
+                object result = DBUtil.ScalarQuery(sql, thamSo);
+                // Giả sử TrangThai = false là ngưng bán, true là đang bán
+                return result != null && !Convert.ToBoolean(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi kiểm tra trạng thái sản phẩm: " + ex.Message);
+            }
+        }
+
+
     }
 }

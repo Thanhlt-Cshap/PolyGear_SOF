@@ -177,6 +177,22 @@ namespace DAL_SOF205
             return $"{prefix}{(max + 1).ToString("D4")}"; // Format thành AC0001, AC0011,...
         }
 
+        public bool CheckDuplicateUsername(string username, string currentEmployeeId)
+        {
+            string sql = "SELECT COUNT(*) FROM Accounts WHERE Username = @Username AND AccountID <> @AccountID";
+            List<object> parameters = new List<object>
+    {
+        new SqlParameter("@Username", username),
+        new SqlParameter("@AccountID", currentEmployeeId)
+    };
+
+            object result = DBUtil.ExecuteScalarQuery(sql, parameters.Cast<SqlParameter>().ToList());
+            int count = Convert.ToInt32(result);
+
+            return count > 0;
+        }
+
+
 
     }
 

@@ -166,6 +166,7 @@
             ClientSize = new Size(1000, 884);
             Controls.Add(groupBox1);
             Name = "Login";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Login";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();

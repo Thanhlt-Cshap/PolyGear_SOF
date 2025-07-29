@@ -63,7 +63,6 @@
             TabCapNhat = new TabPage();
             dgvAccount = new DataGridView();
             groupBox2 = new GroupBox();
-            pictureBox1 = new PictureBox();
             btnHien = new Button();
             btnAn = new Button();
             label14 = new Label();
@@ -81,7 +80,6 @@
             TabCapNhat.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvAccount).BeginInit();
             groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // dgvEmployee
@@ -459,7 +457,6 @@
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(pictureBox1);
             groupBox2.Controls.Add(btnHien);
             groupBox2.Controls.Add(btnAn);
             groupBox2.Controls.Add(label14);
@@ -476,14 +473,6 @@
             groupBox2.TabIndex = 87;
             groupBox2.TabStop = false;
             groupBox2.Text = "Tài khoản";
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.Location = new Point(690, 120);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(68, 30);
-            pictureBox1.TabIndex = 95;
-            pictureBox1.TabStop = false;
             // 
             // btnHien
             // 
@@ -580,7 +569,6 @@
             ((System.ComponentModel.ISupportInitialize)dgvAccount).EndInit();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }
 
@@ -621,7 +609,6 @@
         private TabPage TabCapNhat;
         private DataGridView dgvAccount;
         private GroupBox groupBox2;
-        private PictureBox pictureBox1;
         private Button btnHien;
         private Button btnAn;
         private Label label14;

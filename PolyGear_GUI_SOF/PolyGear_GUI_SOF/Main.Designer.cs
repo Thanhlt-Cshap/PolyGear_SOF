@@ -54,8 +54,10 @@
             toolStripButton5 = new ToolStripButton();
             pnlFormContainer = new Panel();
             label1 = new Label();
+            quảnLýToolStripMenuItem1 = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
+            pnlFormContainer.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -63,16 +65,16 @@
             menuStrip1.Font = new Font("Segoe UI", 11F);
             menuStrip1.ImageScalingSize = new Size(20, 20);
             menuStrip1.Items.AddRange(new ToolStripItem[] { tàiKhoảnToolStripMenuItem, quảnLýToolStripMenuItem, thốngKêToolStripMenuItem, hỗTrợToolStripMenuItem, khácToolStripMenuItem });
-            menuStrip1.Location = new Point(0, 37);
+            menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(8, 2, 0, 2);
-            menuStrip1.Size = new Size(1478, 38);
+            menuStrip1.Size = new Size(1578, 38);
             menuStrip1.TabIndex = 8;
             menuStrip1.Text = "menuStrip1";
             // 
             // tàiKhoảnToolStripMenuItem
             // 
-            tàiKhoảnToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { itmDoiMatKhau });
+            tàiKhoảnToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { itmDoiMatKhau, quảnLýToolStripMenuItem1 });
             tàiKhoảnToolStripMenuItem.Name = "tàiKhoảnToolStripMenuItem";
             tàiKhoảnToolStripMenuItem.Size = new Size(120, 34);
             tàiKhoảnToolStripMenuItem.Text = "Tài khoản";
@@ -167,13 +169,14 @@
             // 
             // toolStrip1
             // 
+            toolStrip1.AutoSize = false;
             toolStrip1.Font = new Font("Segoe UI", 11F);
             toolStrip1.ImageScalingSize = new Size(20, 20);
             toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripButton3, toolStripButton4, toolStripLabel1, lblTaiKhoan, toolStripButton5 });
-            toolStrip1.Location = new Point(0, 0);
+            toolStrip1.Location = new Point(0, 38);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(1478, 37);
-            toolStrip1.TabIndex = 9;
+            toolStrip1.Size = new Size(1578, 37);
+            toolStrip1.TabIndex = 12;
             toolStrip1.Text = "toolStrip1";
             // 
             // toolStripButton1
@@ -241,38 +244,47 @@
             // 
             // pnlFormContainer
             // 
-            pnlFormContainer.Dock = DockStyle.Fill;
-            pnlFormContainer.Location = new Point(0, 0);
-            pnlFormContainer.Margin = new Padding(4);
+            pnlFormContainer.Controls.Add(label1);
+            pnlFormContainer.Dock = DockStyle.Bottom;
+            pnlFormContainer.Location = new Point(0, 78);
+            pnlFormContainer.Margin = new Padding(5);
             pnlFormContainer.Name = "pnlFormContainer";
-            pnlFormContainer.Size = new Size(1478, 744);
-            pnlFormContainer.TabIndex = 11;
+            pnlFormContainer.Size = new Size(1578, 866);
+            pnlFormContainer.TabIndex = 13;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(1104, 56);
+            label1.Location = new Point(1108, 95);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new Size(0, 25);
             label1.TabIndex = 10;
             // 
+            // quảnLýToolStripMenuItem1
+            // 
+            quảnLýToolStripMenuItem1.Name = "quảnLýToolStripMenuItem1";
+            quảnLýToolStripMenuItem1.Size = new Size(270, 38);
+            quảnLýToolStripMenuItem1.Text = "Quản lý";
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1478, 744);
-            Controls.Add(menuStrip1);
+            ClientSize = new Size(1578, 944);
             Controls.Add(toolStrip1);
             Controls.Add(pnlFormContainer);
-            Controls.Add(label1);
+            Controls.Add(menuStrip1);
             Name = "Main";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Main";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
+            pnlFormContainer.ResumeLayout(false);
+            pnlFormContainer.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -295,6 +307,7 @@
         private ToolStripMenuItem trợGiúpToolStripMenuItem;
         private ToolStripMenuItem giớiThiệuToolStripMenuItem;
         private ToolStripMenuItem khácToolStripMenuItem;
+        private ToolStripMenuItem quảnLýToolStripMenuItem1;
         private ToolStrip toolStrip1;
         private ToolStripButton toolStripButton1;
         private ToolStripButton toolStripButton2;

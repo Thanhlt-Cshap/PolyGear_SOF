@@ -137,6 +137,22 @@ namespace PolyGear_UTIL_SOF
                 return dt;
             }
         }
+        public static object ExecuteScalarQuery(string sql, List<SqlParameter> parameters = null, CommandType cmdType = CommandType.Text)
+        {
+            using (SqlConnection conn = new SqlConnection(connString))
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                cmd.CommandType = cmdType;
+
+                if (parameters != null)
+                {
+                    cmd.Parameters.AddRange(parameters.ToArray());
+                }
+
+                conn.Open();
+                return cmd.ExecuteScalar();
+            }
+        }
 
     }
 }

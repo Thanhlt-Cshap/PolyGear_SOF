@@ -19,6 +19,10 @@ namespace PolyGear_GUI_SOF
         public Employees()
         {
             InitializeComponent();
+            this.Padding = new Padding(0);
+            this.Margin = new Padding(0);
+            this.Dock = DockStyle.Fill; // nếu là UserControl
+
         }
 
         private void Employees_Load(object sender, EventArgs e)
@@ -27,7 +31,7 @@ namespace PolyGear_GUI_SOF
         }
         private void Load()
         {
-            EmployeeDAL employeeDAL = new EmployeeDAL();
+            EmployeesDAL employeeDAL = new EmployeesDAL();
             List<EmployeesDTO> danhSach = employeeDAL.selectAll();
 
             dgvEmployee.AutoGenerateColumns = false;

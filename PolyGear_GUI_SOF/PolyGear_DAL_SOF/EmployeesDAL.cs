@@ -8,8 +8,27 @@ using PolyGear_UTIL_SOF;
 
 namespace DAL_SOF205
 {
-    public class EmployeeDAL : SystemDAL.BaseDAL<EmployeesDTO, string>
+    public class EmployeesDAL : SystemDAL.BaseDAL<EmployeesDTO, string>
     {
+
+        public bool CheckDuplicateUsername(string username, string currentEmployeeId)
+        {
+            string sql = "SELECT COUNT(*) FROM Accounts WHERE Username = @Username AND AccountID <> @AccountID";
+
+            List<SqlParameter> parameters = new List<SqlParameter>
+    {
+        new SqlParameter("@Username", username),
+        new SqlParameter("@AccountID", currentEmployeeId)
+    };
+
+            object result = DBUtil.ExecuteScalarQuery(sql, parameters);
+            int count = Convert.ToInt32(result);
+
+            return count > 0;
+        }
+
+
+
         public override List<EmployeesDTO> selectAll()
         {
             string sql = "SELECT * FROM Employees";

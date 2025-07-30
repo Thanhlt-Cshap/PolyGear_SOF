@@ -30,7 +30,7 @@ namespace PolyGear_DAL_SOF
                     if (int.TryParse(numberPart, out int nextNumber))
                     {
                         nextNumber++; // Tăng số lên 1 và tạo mã phiếu mới
-                        return $"{prefix}{nextNumber:D3}"; // Định dạng với 3 chữ số
+                        return $"{prefix}{nextNumber:D4}"; // Định dạng với 3 chữ số
                     }
                 }
                 return $"{prefix}0001"; // Nếu không có mã phiếu nào, trả về mã phiếu đầu tiên

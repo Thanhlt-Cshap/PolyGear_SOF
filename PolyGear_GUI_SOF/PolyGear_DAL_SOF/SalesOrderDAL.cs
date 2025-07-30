@@ -30,7 +30,7 @@ namespace PolyGear_DAL_SOF
                     if (int.TryParse(numberPart, out int nextNumber))
                     {
                         nextNumber++; // Tăng số lên 1 và tạo mã phiếu mới
-                        return $"{prefix}{nextNumber:D3}"; // Định dạng với 3 chữ số
+                        return $"{prefix}{nextNumber:D4}"; // Định dạng với 3 chữ số
                     }
                 }
                 return $"{prefix}0001"; // Nếu không có mã phiếu nào, trả về mã phiếu đầu tiên
@@ -223,6 +223,22 @@ namespace PolyGear_DAL_SOF
                 throw new Exception("Lỗi khi lấy danh sách sản phẩm: " + ex.Message);
             }
             return danhSach;
+        }
+
+        public bool kiemtrachitiet(string maPhieu)
+        {
+            string sql = "SELECT COUNT(*) FROM OrderDetails WHERE DetailID = @0";
+            List<object> thamSo = new List<object> { maPhieu };
+
+            try
+            {
+                object result = DBUtil.ScalarQuery(sql, thamSo);
+                return Convert.ToInt32(result) > 0; // Nếu count > 0, đã có chi tiết phiếu
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi kiểm tra chi tiết phiếu: " + ex.Message);
+            }
         }
 
         public bool hasOrderDetails(string maPhieu)

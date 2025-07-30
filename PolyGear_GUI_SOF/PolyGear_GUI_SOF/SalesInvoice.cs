@@ -404,6 +404,15 @@ namespace PolyGear_GUI_SOF
             {
                 string maPhieu = txtMaPhieu.Text;
 
+                // Kiểm tra trước khi xóa: nếu có chi tiết phiếu thì không cho xóa và hiện thông báo rõ ràng
+                if (salesOrderDAL.kiemtrachitiet(maPhieu))
+                {
+                    MessageBox.Show(
+                        "Không thể xóa phiếu bán hàng này vì đã có chi tiết phiếu!\n" +
+                        "Vui lòng xóa hết chi tiết phiếu trước khi xóa phiếu bán hàng.",
+                        "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
                 // Kiểm tra xem phiếu có tồn tại không
                 if (!salesOrderDAL.exists(maPhieu))
                 {
@@ -411,37 +420,32 @@ namespace PolyGear_GUI_SOF
                     return;
                 }
 
-                // Bắt lỗi nếu đã có sản phẩm trong chi tiết phiếu thì không cho xóa phiếu bán hàng và tắt btnXoaPhieu
-                if (salesOrderDAL.hasOrderDetails(maPhieu))
-                {
-                    btnXoaPhieu.Enabled = false;
-                    MessageBox.Show("Phiếu bán hàng đã có chi tiết phiếu. Không thể xóa phiếu này!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-                else
-                {
-                    btnXoaPhieu.Enabled = true; // Bật lại nút Xóa Phiếu nếu không có chi tiết phiếu
-                }
-
                 // Hiện thông báo để xác nhận xóa phiếu bán hàng
-                DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn xóa phiếu bán hàng này?", "Xác nhận",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
+                DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn xóa phiếu bán hàng này không?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
                 {
-                    // Thực hiện xóa
-                    salesOrderDAL.delete(maPhieu);
-                    // Thông báo thành công
-                    MessageBox.Show("Xóa phiếu bán hàng thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    // Làm sạch form
-                    ClearPhieuBanHang();
-                    // Load lại danh sách phiếu
-                    LoadSalesOrders();
+                    try
+                    {
+                        salesOrderDAL.delete(maPhieu);
+                        MessageBox.Show("Xóa phiếu bán hàng thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadSalesOrders();
+                        ClearPhieuBanHang();
+                        ClearChiTietPhieu();
+                        HienThiTabChiTietPhieu(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Nếu vẫn bị lỗi ràng buộc, hiện thông báo thân thiện hơn
+                        MessageBox.Show(
+                            "Không thể xóa phiếu bán hàng này vì đã có chi tiết phiếu hoặc dữ liệu liên quan.\n" +
+                            "Vui lòng xóa hết chi tiết phiếu trước khi xóa phiếu bán hàng.",
+                            "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi xóa phiếu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi khi xóa phiếu bán hàng: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

@@ -525,6 +525,7 @@
             txtPassword.Location = new Point(355, 182);
             txtPassword.Name = "txtPassword";
             txtPassword.PasswordChar = '*';
+            txtPassword.ReadOnly = true;
             txtPassword.Size = new Size(318, 30);
             txtPassword.TabIndex = 90;
             // 

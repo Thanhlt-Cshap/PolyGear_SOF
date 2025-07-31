@@ -282,7 +282,6 @@
             Name = "Main";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Main";
-            FormClosing += LoginGUI_FormClosing;
             Load += FormMain_Load;
             VisibleChanged += Main_VisibleChanged;
             menuStrip1.ResumeLayout(false);

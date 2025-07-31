@@ -24,7 +24,7 @@ namespace PolyGear_GUI_SOF
         private void btnLogin_Click(object sender, EventArgs e)
         {
             string username = txtUsername.Text.Trim();
-            string password = txtPassword.Text.Trim(); // nên hash nếu bạn có mã hóa
+            string password = txtPassword.Text.Trim(); // Nên mã hóa nếu có
 
             var account = accDAL.selectByUsernamePassword(username, password);
 
@@ -34,16 +34,18 @@ namespace PolyGear_GUI_SOF
                 Session.CurrentAccountID = account.AccountID;
 
                 MessageBox.Show("Đăng nhập thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Hide();
+
+                this.Hide(); // Ẩn form đăng nhập, không đóng ngay
                 Main mainForm = new Main();
+                mainForm.FormClosed += (s, args) => this.Close(); // Khi Main đóng thì Login đóng theo
                 mainForm.Show();
-                mainForm.FormClosed += (s, args) => this.Show(); // hoặc this.Close();
             }
             else
             {
                 MessageBox.Show("Sai tên đăng nhập hoặc mật khẩu!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
 
 

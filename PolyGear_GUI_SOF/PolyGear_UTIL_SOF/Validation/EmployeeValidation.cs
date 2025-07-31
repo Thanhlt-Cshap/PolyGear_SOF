@@ -42,10 +42,11 @@ namespace PolyGear_UTIL_SOF
             return true;
         }
 
-        public static bool IsPhoneDuplicate(string phone, List<EmployeesDTO> list)
+        public static bool IsPhoneDuplicate(string phone, List<EmployeesDTO> list, string currentEmployeeID)
         {
-            return list.Any(e => e.Phone.Equals(phone, StringComparison.OrdinalIgnoreCase));
+            return list.Any(e => e.Phone == phone && e.EmployeeID != currentEmployeeID);
         }
+
 
         public static bool IsValidUsername(string username)
         {

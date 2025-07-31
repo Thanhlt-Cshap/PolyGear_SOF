@@ -1,4 +1,4 @@
-namespace PolyGear_GUI_SOF
+﻿namespace PolyGear_GUI_SOF
 {
     internal static class Program
     {
@@ -13,5 +13,6 @@ namespace PolyGear_GUI_SOF
             ApplicationConfiguration.Initialize();
             Application.Run(new Login());
         }
+
     }
 }

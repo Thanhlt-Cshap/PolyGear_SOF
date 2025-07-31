@@ -25,6 +25,7 @@ namespace PolyGear_GUI_SOF
             btnHien.Visible = false;
             btnAn.Visible = false;
 
+         
 
             dgvEmployee.CellFormatting += dgvEmployee_CellFormatting;
             dgvAccount.CellFormatting += dgvAccount_CellFormatting;
@@ -64,6 +65,8 @@ namespace PolyGear_GUI_SOF
             dgvEmployee.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Email", Name = "Email" });
             dgvEmployee.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Address", Name = "Địa chỉ" });
             dgvEmployee.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "AccountID", Name = "Mã tài khoản" });
+
+
             dgvEmployee.Columns.Add(new DataGridViewTextBoxColumn
             {
                 DataPropertyName = "Status",
@@ -102,32 +105,43 @@ namespace PolyGear_GUI_SOF
             RoleDAL roleDAL = new RoleDAL();
             var list = roleDAL.selectAll();
 
+            if (AuthUtil.IsManager())
+            {
+                cboVaiTro.Enabled = false; // Không cho chọn
+            }
+            else
+            {
+                cboVaiTro.Enabled = true; // Cho phép chọn
+            }
+
             cboVaiTro.DataSource = list;
             cboVaiTro.DisplayMember = "RoleName";
             cboVaiTro.ValueMember = "RoleID";
         }
 
 
-        private void LoadToForm(EmployeesDTO emp)
-        {
-            txtMaNhanVien.Text = emp.EmployeeID;
-            txtHoTen.Text = emp.FullName;
-            dateTimePicker1.Value = (DateTime)emp.DateOfBirth;
 
-            if (emp.Gender == "Nam")
-                rdoNam.Checked = true;
-            else if (emp.Gender == "Nữ")
-                rdoNu.Checked = true;
+        //private void LoadToForm(EmployeesDTO emp)
+        //{
 
-            txtSDT.Text = emp.Phone;
-            txtEmail.Text = emp.Email;
-            txtDiaChi.Text = emp.Address;
+        //    txtMaNhanVien.Text = emp.EmployeeID;
+        //    txtHoTen.Text = emp.FullName;
+        //    dateTimePicker1.Value = (DateTime)emp.DateOfBirth;
 
-            if (emp.Status)
-                rdoHoatDong.Checked = true;
-            else
-                rdoNghiViec.Checked = true;
-        }
+        //    if (emp.Gender == "Nam")
+        //        rdoNam.Checked = true;
+        //    else if (emp.Gender == "Nữ")
+        //        rdoNu.Checked = true;
+
+        //    txtSDT.Text = emp.Phone;
+        //    txtEmail.Text = emp.Email;
+        //    txtDiaChi.Text = emp.Address;
+
+        //    if (emp.Status)
+        //        rdoHoatDong.Checked = true;
+        //    else
+        //        rdoNghiViec.Checked = true;
+        //}
 
         private void dgvEmployee_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
@@ -216,9 +230,14 @@ namespace PolyGear_GUI_SOF
                 Name = "AccountID"  // ← THÊM DÒNG NÀY
             }); dgvAccount.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Username", HeaderText = "Tên đăng nhập" });
             dgvAccount.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Password", HeaderText = "Mật khẩu" });
-            dgvAccount.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "RoleID", HeaderText = "Mã vai trò" });
-            dgvAccount.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "RoleName", HeaderText = "Vai trò" });
-            dgvAccount.Columns.Add(new DataGridViewCheckBoxColumn { DataPropertyName = "Status", HeaderText = "Trạng thái" });
+            dgvAccount.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "RoleID",
+                HeaderText = "Mã vai trò",
+                Name = "RoleID",          // thêm Name để truy xuất đúng
+                Visible = false           // ← ẨN CỘT NÀY
+            }); dgvAccount.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "RoleName", HeaderText = "Vai trò" });
+            //dgvAccount.Columns.Add(new DataGridViewCheckBoxColumn { DataPropertyName = "Status", HeaderText = "Trạng thái" });
 
             dgvAccount.DataSource = accounts;
 
@@ -241,123 +260,174 @@ namespace PolyGear_GUI_SOF
         {
             if (e.RowIndex >= 0)
             {
-                btnSua.Enabled = true;
-                btnXoa.Enabled = true;
-
                 var acc = dgvAccount.Rows[e.RowIndex].DataBoundItem as AccountsDTO;
-                if (acc != null)
+                if (acc == null) return;
+
+                string selectedRoleID = acc.RoleID;
+
+
+
+                // 🔒 PHÂN QUYỀN: nếu là Manager và đang chọn tài khoản Admin thì ẩn hết nút thao tác
+                if (AuthUtil.IsManager() && selectedRoleID == "RL0001")
                 {
-                    // Gán giá trị cho các textbox tài khoản
-                    txtMaTaiKhoan.Text = acc.AccountID;
-                    txtUsername.Text = acc.Username;
-                    txtPassword.Text = acc.Password;
-                    cboVaiTro.SelectedValue = acc.RoleID;
-
-                    // Kiểm tra tài khoản hiện tại
-                    if (Session.CurrentAccountID != null && Session.CurrentAccountID == acc.AccountID)
-                    {
-                        btnHien.Visible = true;
-                        btnAn.Visible = true;
-                    }
-                    else
-                    {
-                        btnHien.Visible = false;
-                        btnAn.Visible = false;
-                    }
-
-                    // LẤY THÔNG TIN NHÂN VIÊN LIÊN KẾT VỚI TÀI KHOẢN
-                    EmployeesDAL employeeDAL = new EmployeesDAL();
-                    EmployeesDTO emp = employeeDAL.GetByAccountID(acc.AccountID);
-
-                    if (emp != null)
-                    {
-                        // Gán thông tin nhân viên vào các textbox
-                        txtMaNhanVien.Text = emp.EmployeeID;
-                        txtHoTen.Text = emp.FullName;
-                        dateTimePicker1.Value = emp.DateOfBirth;
-
-                        // Gán giới tính
-                        if (emp.Gender == "Nam")
-                            rdoNam.Checked = true;
-                        else if (emp.Gender == "Nữ")
-                            rdoNu.Checked = true;
-
-                        // Gán thông tin liên hệ
-                        txtSDT.Text = emp.Phone;
-                        txtEmail.Text = emp.Email;
-                        txtDiaChi.Text = emp.Address;
-
-                        // Gán trạng thái hoạt động
-                        if (emp.Status)
-                            rdoHoatDong.Checked = true;
-                        else
-                            rdoNghiViec.Checked = true;
-
-                    }
-
-                    tabConTrol.SelectedTab = TabCapNhat;
+                    btnThem.Enabled = false;
+                    btnSua.Enabled = false;
+                    btnXoa.Enabled = false;
                 }
-            }
-        }
-
-
-        private void dgvEmployee_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0)
-            {
-                btnSua.Enabled = true;
-                btnXoa.Enabled = true;
-
-                EmployeesDTO emp = (EmployeesDTO)dgvEmployee.Rows[e.RowIndex].DataBoundItem;
-
-                LoadToForm(emp);
-
-                string accountId = emp.AccountID;
-
-                if (!string.IsNullOrEmpty(accountId))
+                else if (AuthUtil.IsManager())
                 {
-                    AccountDAL accDAL = new AccountDAL();
-                    var acc = accDAL.selectById(accountId);
-
-                    if (acc != null)
-                    {
-                        txtMaTaiKhoan.Text = acc.AccountID;
-                        txtUsername.Text = acc.Username;
-                        txtPassword.Text = acc.Password;
-                        cboVaiTro.SelectedValue = acc.RoleID;
-
-                        // ⚠️ Chỉ dùng để hiển thị (không ghi đè tài khoản đăng nhập)
-                        // AuthUtil.user = acc;
-
-                        // ✅ So sánh với tài khoản đang đăng nhập
-                        if (accountId == Session.CurrentAccountID)
-                        {
-                            btnAn.Visible = true;
-                            btnHien.Visible = true;
-                        }
-                        else
-                        {
-                            btnAn.Visible = false;
-                            btnHien.Visible = false;
-                        }
-                    }
+                    btnXoa.Enabled = false; // Không cho Manager xoá bất kỳ tài khoản nào
+                    btnThem.Enabled = true;
+                    btnSua.Enabled = true;
                 }
                 else
                 {
-                    txtMaTaiKhoan.Clear();
-                    txtUsername.Clear();
-                    txtPassword.Clear();
-                    cboVaiTro.SelectedIndex = -1;
+                    // Chủ tài khoản Admin thì full quyền
+                    btnThem.Enabled = true;
+                    btnSua.Enabled = true;
+                    btnXoa.Enabled = true;
+                }
 
-                    // Không có tài khoản, ẩn luôn nút
-                    btnAn.Visible = false;
+                // Gán dữ liệu vào các control tài khoản
+                txtMaTaiKhoan.Text = acc.AccountID;
+                txtUsername.Text = acc.Username;
+                txtPassword.Text = acc.Password;
+                //rs lại dạng mật khẩu và đưa nút show về lại trước
+                txtPassword.PasswordChar = '*';
+                btnHien.BringToFront();
+
+                cboVaiTro.SelectedValue = acc.RoleID;
+
+                // Kiểm tra tài khoản đang đăng nhập
+                if (Session.CurrentAccountID != null && Session.CurrentAccountID == acc.AccountID)
+                {
+                    btnHien.Visible = true;
+                    btnAn.Visible = true;
+                }
+                else
+                {
                     btnHien.Visible = false;
+                    btnAn.Visible = false;
+                }
+
+                // Gán thông tin nhân viên nếu có
+                EmployeesDAL employeeDAL = new EmployeesDAL();
+                EmployeesDTO emp = employeeDAL.GetByAccountID(acc.AccountID);
+
+                if (emp != null)
+                {
+                    txtMaNhanVien.Text = emp.EmployeeID;
+                    txtHoTen.Text = emp.FullName;
+                    dateTimePicker1.Value = emp.DateOfBirth;
+
+                    if (emp.Gender == "Nam") rdoNam.Checked = true;
+                    else if (emp.Gender == "Nữ") rdoNu.Checked = true;
+
+                    txtSDT.Text = emp.Phone;
+                    txtEmail.Text = emp.Email;
+                    txtDiaChi.Text = emp.Address;
+
+                    if (emp.Status)
+                        rdoHoatDong.Checked = true;
+                    else
+                        rdoNghiViec.Checked = true;
                 }
 
                 tabConTrol.SelectedTab = TabCapNhat;
             }
         }
+        private void dgvEmployee_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                EmployeesDTO emp = (EmployeesDTO)dgvEmployee.Rows[e.RowIndex].DataBoundItem;
+                if (emp == null) return;
 
+                string accountId = emp.AccountID;
+
+                // 🔄 Lấy thông tin tài khoản từ AccountID
+                AccountDAL accDAL = new AccountDAL();
+                var acc = accDAL.selectById(accountId);
+
+                if (acc != null)
+                {
+                    string selectedRoleID = acc.RoleID;
+
+                    // 🔒 PHÂN QUYỀN: nếu là Manager và chọn tài khoản Admin
+                    if (AuthUtil.IsManager() && selectedRoleID == "RL0001")
+                    {
+                        btnThem.Enabled = false;
+                        btnSua.Enabled = false;
+                        btnXoa.Enabled = false;
+                    }
+                    else if (AuthUtil.IsManager())
+                    {
+                        btnXoa.Enabled = false; // Không cho Manager xoá bất kỳ tài khoản nào
+                        btnThem.Enabled = true;
+                        btnSua.Enabled = true;
+                    }
+                    else
+                    {
+                        // Chủ tài khoản Admin thì full quyền
+                        btnThem.Enabled = true;
+                        btnSua.Enabled = true;
+                        btnXoa.Enabled = true;
+                    }
+
+                    // Gán thông tin tài khoản
+                    txtMaTaiKhoan.Text = acc.AccountID;
+                    txtUsername.Text = acc.Username;
+                    txtPassword.Text = acc.Password;
+                    //rs lại dạng mật khẩu và đưa nút show về lại trước
+                    txtPassword.PasswordChar = '*';
+                    btnHien.BringToFront();
+
+                    cboVaiTro.SelectedValue = acc.RoleID;
+
+                    // Hiện/ẩn nút ẩn hiện mật khẩu
+                    if (Session.CurrentAccountID != null && Session.CurrentAccountID == acc.AccountID)
+                    {
+                        btnAn.Visible = true;
+                        btnHien.Visible = true;
+                    }
+                    else
+                    {
+                        btnAn.Visible = false;
+                        btnHien.Visible = false;
+                    }
+                }
+                else
+                {
+                    // Nếu không có tài khoản liên kết
+                    txtMaTaiKhoan.Clear();
+                    txtUsername.Clear();
+                    txtPassword.Clear();
+                    cboVaiTro.SelectedIndex = -1;
+
+                    btnAn.Visible = false;
+                    btnHien.Visible = false;
+                }
+
+                // Gán thông tin nhân viên
+                txtMaNhanVien.Text = emp.EmployeeID;
+                txtHoTen.Text = emp.FullName;
+                dateTimePicker1.Value = emp.DateOfBirth;
+
+                if (emp.Gender == "Nam") rdoNam.Checked = true;
+                else if (emp.Gender == "Nữ") rdoNu.Checked = true;
+
+                txtSDT.Text = emp.Phone;
+                txtEmail.Text = emp.Email;
+                txtDiaChi.Text = emp.Address;
+
+                if (emp.Status)
+                    rdoHoatDong.Checked = true;
+                else
+                    rdoNghiViec.Checked = true;
+
+                tabConTrol.SelectedTab = TabCapNhat;
+            }
+        }
 
         private void btnThem_Click(object sender, EventArgs e)
         {
@@ -419,11 +489,12 @@ namespace PolyGear_GUI_SOF
                     return;
                 }
 
-                if (EmployeeValidation.IsPhoneDuplicate(emp.Phone, danhSachNhanVien))
+                if (EmployeeValidation.IsPhoneDuplicate(emp.Phone, danhSachNhanVien, emp.EmployeeID))
                 {
                     MessageBox.Show("Số điện thoại đã tồn tại!", "Trùng số", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+
 
                 // ✅ Tất cả hợp lệ rồi mới tạo ID và thêm vào DB
                 account.AccountID = accDAL.GenerateNewAccountID();
@@ -481,11 +552,12 @@ namespace PolyGear_GUI_SOF
                     MessageBox.Show("Số điện thoại không hợp lệ!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                if (EmployeeValidation.IsPhoneDuplicate(emp.Phone, danhSachNhanVien))
+                if (EmployeeValidation.IsPhoneDuplicate(emp.Phone, danhSachNhanVien, emp.EmployeeID))
                 {
                     MessageBox.Show("Số điện thoại đã tồn tại!", "Trùng số", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+
 
                 // 4. Cập nhật nhân viên
                 dal.update(emp);
@@ -509,7 +581,25 @@ namespace PolyGear_GUI_SOF
                         MessageBox.Show("Tên đăng nhập đã tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
+                    var currentAccount = accDal.selectById(acc.AccountID);
+                    if (currentAccount != null &&
+                        currentAccount.AccountID == Session.CurrentAccountID &&                  // Chính mình
+                        currentAccount.RoleID == "RL0001" &&                                     // Đang là Admin
+                        acc.RoleID != "RL0001")                                                  // Sắp sửa không còn là Admin
+                    {
+                        DialogResult warning = MessageBox.Show(
+                            "Bạn đang thay đổi quyền của chính mình!\nNếu tiếp tục, bạn có thể mất quyền truy cập quản trị.\nBạn có chắc muốn tiếp tục?",
+                            "Cảnh báo",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Warning
+                        );
 
+                        if (warning == DialogResult.No)
+                            return; // Huỷ cập nhật
+                        Load();               // Load lại nhân viên
+                        LoadDataToGrid();
+                        ClearForm();
+                    }
                     accDal.update(acc);
                 }
 
@@ -539,9 +629,6 @@ namespace PolyGear_GUI_SOF
             }
         }
 
-
-
-
         private void btnXoa_Click(object sender, EventArgs e)
         {
             try
@@ -553,24 +640,30 @@ namespace PolyGear_GUI_SOF
                     return;
                 }
 
+                EmployeesDAL empDAL = new EmployeesDAL();
+                AccountDAL accDAL = new AccountDAL();
+
+                // Lấy thông tin nhân viên để biết AccountID
+                EmployeesDTO emp = empDAL.selectById(maNV);
+                if (emp == null)
+                {
+                    MessageBox.Show("Không tìm thấy nhân viên!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // ❌ Kiểm tra nếu tài khoản đang đăng nhập là của nhân viên này
+                if (!string.IsNullOrEmpty(emp.AccountID) && emp.AccountID == Session.CurrentAccountID)
+                {
+                    MessageBox.Show("Không thể xóa tài khoản đang đăng nhập!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 DialogResult result = MessageBox.Show(
                     "Bạn có chắc muốn xóa nhân viên này và tài khoản liên quan?",
                     "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                 {
-                    EmployeesDAL empDAL = new EmployeesDAL();
-                    AccountDAL accDAL = new AccountDAL();
-
-                    // Lấy thông tin nhân viên để biết AccountID
-                    EmployeesDTO emp = empDAL.selectById(maNV);
-
-                    if (emp == null)
-                    {
-                        MessageBox.Show("Không tìm thấy nhân viên!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
                     // 1. Xóa nhân viên trước
                     empDAL.delete(maNV);
 
@@ -585,10 +678,9 @@ namespace PolyGear_GUI_SOF
                         Console.WriteLine(">> AccountID bị rỗng hoặc null, không thể xóa tài khoản.");
                     }
 
-
                     MessageBox.Show("Xóa nhân viên và tài khoản thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     Load();               // Load lại nhân viên
-                    LoadDataToGrid();     // Load lại tài khoản (==> thêm dòng này!)
+                    LoadDataToGrid();     // Load lại tài khoản
                     ClearForm();
                 }
             }
@@ -597,6 +689,7 @@ namespace PolyGear_GUI_SOF
                 MessageBox.Show("Xóa nhân viên thất bại!\n" + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private void tabConTrol_SelectedIndexChanged(object sender, EventArgs e)
         {

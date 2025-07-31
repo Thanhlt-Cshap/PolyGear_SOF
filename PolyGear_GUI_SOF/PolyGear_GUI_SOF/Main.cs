@@ -64,12 +64,29 @@ namespace PolyGear_GUI_SOF
 
         //private void Logout()
         //{
-        //    this.Close();
         //    AuthUtil.Logout();
-        //    Login fromLogin = new Login();
-        //    fromLogin.ShowDialog();
-        //    this.Show();
+
+        //    // Tạo form Login và kiểm tra đăng nhập lại
+        //    this.Hide();
+        //    using (Login loginForm = new Login())
+        //    {
+        //        if (loginForm.ShowDialog() == DialogResult.OK)
+        //        {
+        //            // Nếu đăng nhập lại thành công, cập nhật lại UI
+        //            if (AuthUtil.IsLogin())
+        //            {
+        //                lblTaiKhoan.Text = AuthUtil.user.AccountID;
+        //                this.Show();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            // Nếu không đăng nhập lại, đóng Main
+        //            this.Close();
+        //        }
+        //    }
         //}
+
         private void Main_VisibleChanged(object sender, EventArgs e)
         {
             CheckRole();
@@ -79,7 +96,7 @@ namespace PolyGear_GUI_SOF
 
         private void itmQLNhanVien_Click(object sender, EventArgs e)
         {
-            if (!AuthUtil.IsStoreOwner())
+            if (AuthUtil.IsEmployee())
             {
                 MessageBox.Show("Bạn không có quyền truy cập vào chức năng này.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -89,16 +106,8 @@ namespace PolyGear_GUI_SOF
 
         private void imtDangXuat_Click(object sender, EventArgs e)
         {
-            this.Hide(); // Ẩn form Main hiện tại
-
-            Login loginForm = new Login();
-            loginForm.Show(); // Mở lại form đăng nhập
-
-            // Nếu muốn đóng form Main sau khi loginForm đóng => dùng:
-            // loginForm.FormClosed += (s, args) => this.Close();        
+            Application.Restart();
         }
-
-
 
         private void FormMain_Load(object sender, EventArgs e)
         {
@@ -128,13 +137,13 @@ namespace PolyGear_GUI_SOF
             loginForm.Show(); // Mở lại form đăng nhập
 
         }
-        private void LoginGUI_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (this.DialogResult != DialogResult.OK && e.CloseReason == CloseReason.UserClosing)
-            {
-                MessageBox.Show("Vui lòng đăng xuất!!!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                e.Cancel = true;
-            }
-        }
+        //private void LoginGUI_FormClosing(object sender, FormClosingEventArgs e)
+        //{
+        //    if (this.DialogResult != DialogResult.OK && e.CloseReason == CloseReason.UserClosing)
+        //    {
+        //        MessageBox.Show("Vui lòng đăng xuất!!!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        e.Cancel = true;
+        //    }
+        //}
     }
 }
